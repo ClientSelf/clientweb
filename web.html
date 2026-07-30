@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050505">
+  <title>CLIENT SELF | پنل هوشمند دستورات</title>
+  
+  <!-- فونت وزیرمتن و آیکون‌های FontAwesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ─── RESET & METALLIC SILVER VARIABLES ─────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-black: #050507;
+      --bg-card: rgba(18, 18, 22, 0.75);
+      --bg-card-hover: rgba(30, 30, 38, 0.85);
+      
+      /* تم رنگی نقره‌ای متالیک */
+      --silver-bright: #ffffff;
+      --silver-light: #e2e8f0;
+      --silver-mid: #94a3b8;
+      --silver-dark: #475569;
+      --silver-border: rgba(255, 255, 255, 0.15);
+      --silver-border-strong: rgba(255, 255, 255, 0.35);
+      --silver-glow: rgba(255, 255, 255, 0.12);
+      --silver-glow-strong: rgba(255, 255, 255, 0.25);
+
+      --gradient-silver: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
+      --gradient-silver-btn: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%);
+      --gradient-card-border: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.05));
+    }
+
+    html, body {
+      background-color: var(--bg-black);
+      color: var(--silver-light);
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ─── BACKGROUND ANIMATION ───────────────────────────────────────────── */
+    .bg-animated {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    .silver-blob {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--silver-glow) 0%, transparent 70%);
+      filter: blur(80px);
+      animation: floatGlow 14s infinite alternate ease-in-out;
+    }
+
+    .blob-1 { top: -150px; right: -100px; }
+    .blob-2 { bottom: -200px; left: -100px; animation-delay: -7s; }
+
+    @keyframes floatGlow {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, 40px) scale(1.2); }
+    }
+
+    /* ─── CONTAINER ──────────────────────────────────────────────────────── */
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── TOP BAR (STICKY) ───────────────────────────────────────────────── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      background: rgba(5, 5, 7, 0.85);
+      border-bottom: 1px solid var(--silver-border);
+      margin: 0 -20px 30px;
+      padding: 14px 20px;
+    }
+
+    .topbar-inner {
+      max-width: 940px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .brand-logo {
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: var(--gradient-silver);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .search-box {
+      flex: 1;
+      max-width: 420px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--silver-border);
+      border-radius: 12px;
+      color: #fff;
+      padding: 10px 42px 10px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--silver-bright);
+      box-shadow: 0 0 20px var(--silver-glow-strong);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .search-box i {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--silver-mid);
+      font-size: 14px;
+    }
+
+    .stats-badge {
+      font-size: 11px;
+      color: var(--silver-light);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--silver-border);
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+    }
+
+    /* ─── HERO HEADER ────────────────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 45px 0 35px;
+      position: relative;
+    }
+
+    .hero-title {
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: 8px;
+      background: var(--gradient-silver);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.15));
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      color: var(--silver-mid);
+      letter-spacing: 1px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ─── SECTION TITLES ─────────────────────────────────────────────────── */
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      margin: 50px 0 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-right: 3px solid var(--silver-bright);
+      padding-right: 14px;
+    }
+
+    .section-title i {
+      color: var(--silver-mid);
+    }
+
+    /* ─── COMMAND CARDS ──────────────────────────────────────────────────── */
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .cmd-card {
+      background: var(--bg-card);
+      border: 1px solid var(--silver-border);
+      border-radius: 14px;
+      padding: 15px 18px;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cmd-card:hover {
+      border-color: var(--silver-border-strong);
+      background: var(--bg-card-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--silver-glow);
+    }
+
+    .cmd-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--silver-bright);
+      direction: ltr;
+      text-align: right;
+      display: inline-block;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 3px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--silver-border);
+    }
+
+    .cmd-desc {
+      font-size: 12.5px;
+      color: var(--silver-mid);
+      line-height: 1.5;
+    }
+
+    /* ─── VIP PRICING SECTION (VERY COOL) ────────────────────────────────── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-top: 15px;
+    }
+
+    .price-card {
+      background: linear-gradient(160deg, rgba(28, 28, 35, 0.9) 0%, rgba(10, 10, 14, 0.95) 100%);
+      border: 1px solid var(--silver-border);
+      border-radius: 22px;
+      padding: 35px 25px 28px;
+      position: relative;
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(15px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .price-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--gradient-silver);
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+
+    .price-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--silver-border-strong);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--silver-glow-strong);
+    }
+
+    .price-card:hover::before {
+      opacity: 1;
+    }
+
+    .price-card.popular {
+      border: 1px solid var(--silver-border-strong);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 25px var(--silver-glow);
+    }
+
+    .price-card.popular::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      padding: 1px;
+      background: var(--gradient-silver);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .price-badge {
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      background: var(--gradient-silver);
+      color: #000;
+      font-size: 10.5px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+    }
+
+    .price-header {
+      margin-bottom: 20px;
+    }
+
+    .price-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .price-subtitle {
+      font-size: 12px;
+      color: var(--silver-mid);
+    }
+
+    .price-amount-box {
+      margin: 20px 0 25px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+    }
+
+    .price-amount {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--silver-bright);
+      line-height: 1;
+    }
+
+    .price-amount span {
+      font-size: 13px;
+      color: var(--silver-mid);
+      font-weight: 400;
+      margin-right: 4px;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 30px;
+    }
+
+    .plan-features li {
+      font-size: 12.5px;
+      color: var(--silver-light);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .plan-features li i {
+      color: var(--silver-bright);
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn-buy {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px;
+      background: var(--gradient-silver-btn);
+      color: #050507;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-buy:hover {
+      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+      transform: scale(1.02);
+      box-shadow: 0 6px 25px rgba(255, 255, 255, 0.3);
+    }
+
+    /* ─── SOCIAL MEDIA SECTION (UPGRADED) ────────────────────────────────── */
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .social-card {
+      background: var(--bg-card);
+      border: 1px solid var(--silver-border);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: var(--silver-light);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .social-card:hover {
+      border-color: var(--silver-border-strong);
+      background: var(--bg-card-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px var(--silver-glow);
+    }
+
+    .social-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .social-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--silver-border);
+      color: var(--silver-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .social-card:hover .social-icon-box {
+      background: #fff;
+      color: #000;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+
+    .social-title {
+      font-weight: 800;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .social-handle {
+      font-size: 12px;
+      color: var(--silver-mid);
+    }
+
+    .social-action-btn {
+      font-size: 11px;
+      font-weight: 700;
+      color: #000;
+      background: var(--silver-light);
+      padding: 6px 12px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .social-card:hover .social-action-btn {
+      background: #fff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    /* ─── DEVELOPERS SECTION ─────────────────────────────────────────────── */
+    .devs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .dev-card {
+      background: var(--bg-card);
+      border: 1px solid var(--silver-border);
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      text-decoration: none;
+      color: var(--silver-light);
+      transition: all 0.3s ease;
+    }
+
+    .dev-card:hover {
+      border-color: var(--silver-border-strong);
+      background: var(--bg-card-hover);
+      transform: translateY(-3px);
+    }
+
+    .dev-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--silver-border);
+      color: var(--silver-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .dev-name {
+      font-weight: 800;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .dev-role {
+      font-size: 11.5px;
+      color: var(--silver-mid);
+    }
+
+    /* ─── EMPTY STATE ───────────────────────────────────────────────────── */
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 60px 0;
+      color: var(--silver-mid);
+      font-size: 14px;
+    }
+
+    /* ─── FOOTER ────────────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      margin-top: 70px;
+      padding-top: 25px;
+      border-top: 1px solid var(--silver-border);
+      color: var(--silver-dark);
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    /* ─── RESPONSIVE ────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .hero-title { font-size: 34px; letter-spacing: 4px; }
+      .brand-logo { font-size: 14px; }
+      .search-box input { font-size: 12px; padding-top: 8px; padding-bottom: 8px; }
+      .stats-badge { display: none; }
+      .cmd-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .social-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- پس‌زمینه نقره‌ای متالیک انیمیشن‌دار -->
+  <div class="bg-animated">
+    <div class="bg-grid"></div>
+    <div class="silver-blob blob-1"></div>
+    <div class="silver-blob blob-2"></div>
+  </div>
+
+  <!-- نوار بالای صفحه (STICKY) -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-logo">
+        <i class="fa-solid fa-shield-halved"></i>
+        CLIENT SELF
+      </div>
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="searchInput" type="text" placeholder="جستجوی سریع دستورات..." autocomplete="off">
+      </div>
+      <div class="stats-badge" id="statsCounter">در حال بارگذاری...</div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- هدر اصلی -->
+    <header class="hero">
+      <h1 class="hero-title">CLIENT SELF</h1>
+      <p class="hero-subtitle">⚡ راهنمای جامع و هوشمند دستورات سلف‌بات اختصاصی ⚡</p>
+    </header>
+
+    <!-- پیغام عدم یافتن نتیجه در سرچ -->
+    <div id="emptyState" class="empty-state">
+      <i class="fa-solid fa-magnifying-glass-minus" style="font-size: 28px; margin-bottom: 10px; color: var(--silver-dark);"></i>
+      <p>دستور موردنظر یافت نشد.</p>
+    </div>
+
+    <!-- لیست کامل دستورات -->
+    <main id="commandsContainer">
+      
+      <div class="section-title">
+        <i class="fa-solid fa-sliders"></i>
+        مدیریت حساب و پروفایل
+      </div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-name">.ساعت روشن / .ساعت خاموش</div>
+          <div class="cmd-desc">مدیریت و فعال‌سازی ساعت خودکار روی نام اکانت</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.حالت تایپ روشن / .حالت تایپ خاموش</div>
+          <div class="cmd-desc">نمایش دائمی وضعیت Typing... در چت‌ها</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.حالت بازی روشن / .حالت بازی خاموش</div>
+          <div class="cmd-desc">نمایش حالت Playing Game در وضعیت اکانت</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.آیدی</div>
+          <div class="cmd-desc">نمایش کامل مشخصات، آیدی‌عددی و اطلاعات کاربر</div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <i class="fa-solid fa-bullhorn"></i>
+        تبلیغات و بنر خودکار
+      </div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-name">.تنظیم بنر [ثانیه]</div>
+          <div class="cmd-desc">تنظیم ارسال هوشمند و زمان‌بندی شده بنر در گروه‌ها</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.بنر</div>
+          <div class="cmd-desc">مشاهده لیست تمامی بنرهای فعال روی اکانت</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.پاکسازی بنر</div>
+          <div class="cmd-desc">حذف بنرهای فعال مربوط به گروه فعلی</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.پاکسازی کل بنر</div>
+          <div class="cmd-desc">حذف تمامی بنرهای فعال در کل اکانت</div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <i class="fa-solid fa-paper-plane"></i>
+        ارسال پیام و پیوی
+      </div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-name">.فعال</div>
+          <div class="cmd-desc">استخراج لیست ۲۰ کاربر اخیر که در گروه چت کرده‌اند</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.پیام [متن]</div>
+          <div class="cmd-desc">ارسال پیام خصوصی انبوه به لیست افراد استخراج‌شده</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.قفل پیوی روشن / خاموش</div>
+          <div class="cmd-desc">مدیریت قفل پیام‌های ورودی در پیوی</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.حالت روح روشن / خاموش</div>
+          <div class="cmd-desc">سین نشدن پیام‌های دریافتی (حالت روح)</div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        ابزارهای هوشمند و دانلود
+      </div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-name">.ذخیره</div>
+          <div class="cmd-desc">ذخیره سریع پیام یا رسانه ریپلای‌شده در Saved Messages</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.دانلود [لینک]</div>
+          <div class="cmd-desc">دانلود مستقیم و سریع فیلم و پست از اینستاگرام و تیک‌تاک</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.ترجمه</div>
+          <div class="cmd-desc">ترجمه دوطرفه هوشمند متون (فارسی / انگلیسی)</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.تاس 6</div>
+          <div class="cmd-desc">پرتاب متوالی تاس تا زمان آوردن عدد ۶ (تقلب)</div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <i class="fa-solid fa-icons"></i>
+        منشی و ری‌اکشن
+      </div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-name">.ریکت [ایموجی]</div>
+          <div class="cmd-desc">تنظیم ری‌اکشن خودکار با ریپلای روی کاربر موردنظر</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.ریکت خاموش</div>
+          <div class="cmd-desc">حذف کاربر ریپلای‌شده از لیست ری‌اکشن خودکار</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.لیست ریکت / .پاکسازی لیست ریکت</div>
+          <div class="cmd-desc">مشاهده و پاکسازی کامل لیست ری‌اکشن‌ها</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.تنظیم متن منشی [متن]</div>
+          <div class="cmd-desc">تنظیم متن پاسخ خودکار منشی پیوی</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.منشی روشن / .منشی خاموش</div>
+          <div class="cmd-desc">فعال‌سازی یا غیرفعال‌سازی پاسخگوی خودکار پیوی</div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <i class="fa-solid fa-users-gear"></i>
+        مدیریت هدفمند (دوست / دشمن)
+      </div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-name">.تنظیم دوست / .حذف دوست</div>
+          <div class="cmd-desc">مدیریت لیست دوستان با دستورات (.لیست دوست / .پاکسازی دوست)</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name">.تنظیم دشمن / .حذف دشمن</div>
+          <div class="cmd-desc">مدیریت کامل لیست دشمنان با دستورات (.لیست دشمن / .پاکسازی دشمن)</div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- سکشن فروش حرفه‌ای و فوق‌العاده خفن -->
+    <section>
+      <div class="section-title">
+        <i class="fa-solid fa-gem"></i>
+        پلن‌های اشتراک CLIENT SELF
+      </div>
+      
+      <div class="pricing-grid">
+        
+        <!-- پلن ۱۵ روزه -->
+        <div class="price-card">
+          <div class="price-header">
+            <div class="price-title">اشتراک اقتصادی</div>
+            <div class="price-subtitle">مناسب برای تست و بررسی امکانات فوق‌العاده سلف‌بات</div>
+          </div>
+
+          <div class="price-amount-box">
+            <div class="price-amount">۵۰,۰۰۰ <span>تومان</span></div>
+          </div>
+
+          <ul class="plan-features">
+            <li><i class="fa-solid fa-check"></i> دسترسی کامل به تمام ۲۵+ دستور کاربردی</li>
+            <li><i class="fa-solid fa-check"></i> سرعت اجرای بالاو آپتایم ۹۹.۹٪ بدون قطعی</li>
+            <li><i class="fa-solid fa-check"></i> فعال‌سازی آنی پس از پرداخت</li>
+            <li><i class="fa-solid fa-check"></i> پشتیبانی ۲۴/۷ در تلگرام</li>
+          </ul>
+
+          <a href="https://t.me/ClientSelfBot" target="_blank" class="btn-buy">
+            <i class="fa-brands fa-telegram"></i>
+            خرید و فعال‌سازی آنلاین
+          </a>
+        </div>
+
+        <!-- پلن ۳۰ روزه VIP -->
+        <div class="price-card popular">
+          <div class="price-badge">محبوب‌ترین انتخاب</div>
+          
+          <div class="price-header">
+            <div class="price-title">اشتراک ویژه VIP</div>
+            <div class="price-subtitle">برای افرادی که به دنبال سرعت حداکثری و اتوماسیون کامل هستند</div>
+          </div>
+
+          <div class="price-amount-box">
+            <div class="price-amount">۱۰۰,۰۰۰ <span>تومان</span></div>
+          </div>
+
+          <ul class="plan-features">
+            <li><i class="fa-solid fa-check"></i> دسترسی نامحدود به کل قابلیت‌ها و دستورات</li>
+            <li><i class="fa-solid fa-check"></i> اولویت در سرعت پردازش و لود بدون تاخیر</li>
+            <li><i class="fa-solid fa-check"></i> دریافت رایگان تمام آپدیت‌های آینده</li>
+            <li><i class="fa-solid fa-check"></i> پشتیبانی اختصاصی VIP و سریع</li>
+            <li><i class="fa-solid fa-check"></i> قابلیت تمدید آسان بدون از دست رفتن تنظیمات</li>
+          </ul>
+
+          <a href="https://t.me/ClientSelfBot" target="_blank" class="btn-buy">
+            <i class="fa-brands fa-telegram"></i>
+            خرید اشتراک VIP
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- سکشن سوشال مدیا ارتقا یافته -->
+    <section>
+      <div class="section-title">
+        <i class="fa-solid fa-globe"></i>
+        ارتباط و شبکه های اجتماعی
+      </div>
+      <div class="social-grid">
+        
+        <a href="https://t.me/ClientSelfGp" target="_blank" class="social-card">
+          <div class="social-left">
+            <div class="social-icon-box"><i class="fa-solid fa-users"></i></div>
+            <div>
+              <div class="social-title">گروه رسمی پشتیبانی</div>
+              <div class="social-handle">@ClientSelfGp</div>
+            </div>
+          </div>
+          <div class="social-action-btn">ورود به گروه</div>
+        </a>
+
+        <a href="https://t.me/ClientSelfBot" target="_blank" class="social-card">
+          <div class="social-left">
+            <div class="social-icon-box"><i class="fa-solid fa-robot"></i></div>
+            <div>
+              <div class="social-title">ربات ثبت و مدیریت</div>
+              <div class="social-handle">@ClientSelfBot</div>
+            </div>
+          </div>
+          <div class="social-action-btn">شروع ربات</div>
+        </a>
+
+        <a href="https://t.me/ClientSelf" target="_blank" class="social-card">
+          <div class="social-left">
+            <div class="social-icon-box"><i class="fa-solid fa-bullhorn"></i></div>
+            <div>
+              <div class="social-title">کانال اطلاع‌رسانی</div>
+              <div class="social-handle">@ClientSelf</div>
+            </div>
+          </div>
+          <div class="social-action-btn">عضویت</div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- سکشن طراحان -->
+    <section>
+      <div class="section-title">
+        <i class="fa-solid fa-code"></i>
+        تیم توسعه و طراحی
+      </div>
+      <div class="devs-grid">
+        <a href="https://t.me/KhodeAtlas" target="_blank" class="dev-card">
+          <div class="dev-avatar"><i class="fa-solid fa-terminal"></i></div>
+          <div>
+            <div class="dev-name">AtLaS</div>
+            <div class="dev-role">Web Developer (@KhodeAtlas)</div>
+          </div>
+        </a>
+        <a href="https://t.me/RealSHIFU" target="_blank" class="dev-card">
+          <div class="dev-avatar"><i class="fa-solid fa-crown"></i></div>
+          <div>
+            <div class="dev-name">SHIFU</div>
+            <div class="dev-role">Creator Self (@RealSHIFU)</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- فوتر -->
+    <footer>
+      CLIENT SELF &copy; 2026 - طراحی متالیک و قدرتمند برای بهترین تجربه کاربری
+    </footer>
+
+  </div>
+
+  <!-- اسکریپت تعاملی -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const searchInput = document.getElementById('searchInput');
+      const cmdCards = document.querySelectorAll('.cmd-card');
+      const statsCounter = document.getElementById('statsCounter');
+      const emptyState = document.getElementById('emptyState');
+
+      // شمارش دستورات
+      function updateStats() {
+        statsCounter.textContent = `${cmdCards.length} دستور فعال`;
+      }
+      updateStats();
+
+      // جستجوی آنی و هوشمند
+      searchInput.addEventListener('input', function () {
+        const query = this.value.trim().toLowerCase();
+        let matchCount = 0;
+
+        cmdCards.forEach(card => {
+          const name = card.querySelector('.cmd-name').textContent.toLowerCase();
+          const desc = card.querySelector('.cmd-desc').textContent.toLowerCase();
+          const matches = name.includes(query) || desc.includes(query);
+
+          if (matches) {
+            card.style.display = 'block';
+            matchCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        // مدیریت نمایش عناوین بخش‌ها
+        const grids = document.querySelectorAll('.cmd-grid');
+        grids.forEach(grid => {
+          const visibleCards = grid.querySelectorAll('.cmd-card[style*="display: block"]');
+          const title = grid.previousElementSibling;
+          if (title && title.classList.contains('section-title')) {
+            title.style.display = (visibleCards.length === 0 && query !== '') ? 'none' : 'flex';
+          }
+        });
+
+        emptyState.style.display = (matchCount === 0 && query !== '') ? 'block' : 'none';
+      });
+
+      // کپی سریع با کلیک
+      cmdCards.forEach(card => {
+        card.addEventListener('click', function () {
+          const cmdText = this.querySelector('.cmd-name').textContent;
+          navigator.clipboard.writeText(cmdText).then(() => {
+            const descElem = this.querySelector('.cmd-desc');
+            const originalText = descElem.textContent;
+            descElem.textContent = '⚡ دستور کپی شد!';
+            descElem.style.color = '#ffffff';
+            descElem.style.fontWeight = 'bold';
+            setTimeout(() => {
+              descElem.textContent = originalText;
+              descElem.style.color = '';
+              descElem.style.fontWeight = '';
+            }, 1400);
+          });
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
